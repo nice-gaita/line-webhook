@@ -4,6 +4,12 @@ import hmac
 import json
 import os
 from flask import Flask, request, abort
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
 
 app = Flask(__name__)
 
@@ -29,10 +35,13 @@ def webhook():
     # groupId をログに出す（取得できればOK）
     for ev in events:
         src = ev.get("source", {})
+        logging.info("[SOURCE] %s", src)
+    
         if src.get("type") == "group" and src.get("groupId"):
-            print(f"[GROUP_ID] {src['groupId']}")  # ← Cloud Runログで拾う
+            logging.info("[GROUP_ID] %s", src["groupId"])
         elif src.get("type") == "room" and src.get("roomId"):
-            print(f"[ROOM_ID] {src['roomId']}")
+            logging.info("[ROOM_ID] %s", src["roomId"])
+
 
     return "OK", 200
 
